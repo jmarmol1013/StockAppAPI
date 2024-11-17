@@ -1,0 +1,42 @@
+﻿# Ignore build outputs and temporary files
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Auto-generated files
+Generated/
+
+# Package files
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Log files
+*.log
+
+# VS Code directories
+.vscode/
+
+# Rider IDE directories
+.idea/
+*.sln.iml
+
+# Configuration and environment files
+appsettings*.json
+.env
+
+# Temporary files
+*.swp
+*.tmp
+~*
+
+App.config
