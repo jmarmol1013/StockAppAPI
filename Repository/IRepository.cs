@@ -1,4 +1,6 @@
-﻿namespace StockAppAPI.Repository
+﻿using StockAppAPI.Models;
+
+namespace StockAppAPI.Repository
 {
     public interface IRepository<T>
     {

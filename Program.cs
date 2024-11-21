@@ -38,6 +38,8 @@ builder.Services.AddScoped<IDynamoDBContext, DynamoDBContext>();
 builder.Services.AddScoped<IRepository<Stock>, DynamoDBRepository<Stock>>();
 builder.Services.AddScoped<IStockService, StockService>();
 
+builder.Services.AddScoped<IRepository<User>, DynamoDBRepository<User>>(); // Adjust if using a custom repository
+builder.Services.AddScoped<IUserService, UserService>();
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
 
