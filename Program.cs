@@ -20,6 +20,7 @@ builder.Services.AddSwaggerGen();
 string accessKey = ConfigurationManager.AppSettings["AWSAccessKey"];
 string secretKey = ConfigurationManager.AppSettings["AWSSecretKey"];
 string region = ConfigurationManager.AppSettings["AWSRegion"];
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 AWSOptions awsOptions = new AWSOptions
 {
@@ -43,6 +44,18 @@ builder.Services.AddScoped<IUserService, UserService>();
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
 
+// Add cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                      });
+});
+
 // Add controllers and Swagger
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
@@ -57,6 +70,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
+
 
 app.UseAuthorization();
 
