@@ -18,7 +18,13 @@ namespace StockAppAPI
                     src.HistoricalData.Last().CurrentPrice : 0))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src =>
                     src.HistoricalData != null && src.HistoricalData.Any() ?
-                    src.HistoricalData.Last().Date : string.Empty));
+                    src.HistoricalData.Last().Date : string.Empty))
+                .ForMember(dest => dest.Volume, opt => opt.MapFrom(src =>
+                    src.HistoricalData != null && src.HistoricalData.Any() ?
+                    src.HistoricalData.Last().Volume : 0))
+                .ForMember(dest => dest.Change, opt => opt.MapFrom(src =>
+                    src.HistoricalData != null && src.HistoricalData.Any() ?
+                    src.HistoricalData.Last().Change : 0));
 
             CreateMap<UpdateStockDTO, HistoricalData>().ReverseMap();
 

@@ -12,6 +12,10 @@ namespace StockAppAPI.DTO
         public string StockSymbol { get; set; }
         public double CurrentPrice { get; set; }
         public string Date { get; set; }
+
+        public double Volume { get; set; }
+        public double Change { get; set; }
+
     }
 
     public class AddStockDto
