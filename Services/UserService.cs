@@ -10,11 +10,13 @@ namespace StockAppAPI.Services
     public class UserService : IUserService
     {
         private readonly IRepository<User> _userRepository;
+        private readonly IRepository<Stock> _stockRepository;
         private readonly IMapper _mapper;
 
-        public UserService(IRepository<User> userRepository, IMapper mapper)
+        public UserService(IRepository<User> userRepository,IRepository<Stock> stockRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _stockRepository = stockRepository;
             _mapper = mapper;
         }
 
@@ -46,19 +48,54 @@ namespace StockAppAPI.Services
         }
         public async Task DeleteUserAsync(string email)
         {
-            
+
             User user = await _userRepository.GetByIdAsync(email);
             if (user == null)
             {
                 throw new KeyNotFoundException($"User with email {email} not found.");
             }
 
-            await _userRepository.DeleteAsync(email); 
+            await _userRepository.DeleteAsync(email);
         }
 
         public async Task UpdateUserAsync(User user)
         {
-            await _userRepository.UpdateAsync(user);  
+            await _userRepository.UpdateAsync(user);
+        }
+
+        public async Task AddFavoriteStockAsync(string email, string stockSymbol)
+        {
+            // Retrieve the user
+            var user = await _userRepository.GetByIdAsync(email);
+            if (user == null)
+                throw new KeyNotFoundException($"User with email {email} not found.");
+
+            // Retrieve the stock
+            var stock = await _stockRepository.GetByIdAsync(stockSymbol);
+            if (stock == null)
+                throw new KeyNotFoundException($"Stock with symbol {stockSymbol} not found.");
+
+            // Extract the most recent current price from historical data
+            var mostRecentData = stock.HistoricalData
+                .OrderByDescending(h => DateTime.Parse(h.Date)) // Ensure correct ordering
+                .FirstOrDefault();
+
+            if (mostRecentData == null)
+                throw new InvalidOperationException($"No historical data available for stock {stockSymbol}.");
+
+            // Check if the stock is already in the user's favorites
+            if (user.Favorites.Any(f => f.StockSymbol == stockSymbol))
+                throw new InvalidOperationException($"Stock with symbol {stockSymbol} is already a favorite.");
+
+            // Add to favorites
+            user.Favorites.Add(new FavoriteStock
+            {
+                StockSymbol = stockSymbol,
+                CurrentPrice = mostRecentData.CurrentPrice // Use the most recent current price
+            });
+
+            // Save user back to the repository
+            await _userRepository.UpdateAsync(user);
         }
 
     }

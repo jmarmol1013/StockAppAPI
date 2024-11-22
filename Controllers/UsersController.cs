@@ -119,6 +119,27 @@ namespace StockAppAPI.Controllers
         }
 
 
+        [HttpPost("{email}/favorites")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> AddFavoriteStock(string email, [FromBody] AddFavoriteDTO favoriteDto)
+        {
+            try
+            {
+                await _userService.AddFavoriteStockAsync(email, favoriteDto.StockSymbol);
+                return Ok($"Stock {favoriteDto.StockSymbol} added to favorites.");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 
 }

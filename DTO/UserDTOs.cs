@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
+using StockAppAPI.Models;
 namespace StockAppAPI.DTO
 {
     public class RegisterUserDTO
@@ -30,6 +31,8 @@ namespace StockAppAPI.DTO
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public bool IsAdmin { get; set; }
+        public List<FavoriteStock> Favorites { get; set; } = new List<FavoriteStock>();
+
     }
 
     public class UserDetailDTO
@@ -44,6 +47,11 @@ namespace StockAppAPI.DTO
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+    }
+
+    public class AddFavoriteDTO
+    {
+        public string StockSymbol { get; set; }
     }
 
 }

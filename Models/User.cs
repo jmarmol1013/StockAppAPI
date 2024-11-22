@@ -19,5 +19,14 @@ namespace StockAppAPI.Models
 
         [DynamoDBProperty("password")]
         public string Password { get; set; }
+        [DynamoDBProperty("favorites")]
+        public List<FavoriteStock> Favorites { get; set; } = new List<FavoriteStock>();
+    }
+    public class FavoriteStock
+    {
+        [DynamoDBProperty("stockSymbol")]
+        public string StockSymbol { get; set; }
+        [DynamoDBProperty("currentPrice")]
+        public double CurrentPrice { get; set; }
     }
 }

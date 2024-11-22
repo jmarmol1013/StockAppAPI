@@ -13,5 +13,6 @@ namespace StockAppAPI.Services
         Task LoginUserAsync(LoginUserDTO loginUserDto);
         Task DeleteUserAsync(string email);        
         Task UpdateUserAsync(User user);
+        Task AddFavoriteStockAsync(string email, string stockSymbol);
     }
 }
