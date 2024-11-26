@@ -65,36 +65,75 @@ namespace StockAppAPI.Services
 
         public async Task AddFavoriteStockAsync(string email, string stockSymbol)
         {
-            // Retrieve the user
+         
             var user = await _userRepository.GetByIdAsync(email);
             if (user == null)
                 throw new KeyNotFoundException($"User with email {email} not found.");
 
-            // Retrieve the stock
             var stock = await _stockRepository.GetByIdAsync(stockSymbol);
             if (stock == null)
                 throw new KeyNotFoundException($"Stock with symbol {stockSymbol} not found.");
 
-            // Extract the most recent current price from historical data
             var mostRecentData = stock.HistoricalData
-                .OrderByDescending(h => DateTime.Parse(h.Date)) // Ensure correct ordering
+                .OrderByDescending(h => DateTime.Parse(h.Date)) 
                 .FirstOrDefault();
 
             if (mostRecentData == null)
                 throw new InvalidOperationException($"No historical data available for stock {stockSymbol}.");
-
-            // Check if the stock is already in the user's favorites
+           
             if (user.Favorites.Any(f => f.StockSymbol == stockSymbol))
                 throw new InvalidOperationException($"Stock with symbol {stockSymbol} is already a favorite.");
-
-            // Add to favorites
+   
             user.Favorites.Add(new FavoriteStock
             {
                 StockSymbol = stockSymbol,
-                CurrentPrice = mostRecentData.CurrentPrice // Use the most recent current price
+                CurrentPrice = mostRecentData.CurrentPrice 
             });
 
-            // Save user back to the repository
+            await _userRepository.UpdateAsync(user);
+        }
+        
+
+        public async Task<List<FavoriteStock>> GetUserFavoritesAsync(string email)
+        {
+           
+            var user = await _userRepository.GetByIdAsync(email);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with email {email} not found.");
+            }
+
+           
+            return user.Favorites;
+        }
+        public async Task<UserOverviewDTO> GetUserOverviewByEmailAsync(string email)
+        {
+        
+            var user = await _userRepository.GetByIdAsync(email);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with email {email} not found.");
+            }
+
+            return _mapper.Map<UserOverviewDTO>(user);
+        }
+
+        public async Task DeleteFavoriteStockAsync(string email, string stockSymbol)
+        {
+
+            var user = await _userRepository.GetByIdAsync(email);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with email {email} not found.");
+            }
+
+            var favoriteStock = user.Favorites.FirstOrDefault(f => f.StockSymbol == stockSymbol);
+            if (favoriteStock == null)
+            {
+                throw new KeyNotFoundException($"Stock with symbol {stockSymbol} not found in user's favorites.");
+            }
+
+            user.Favorites.Remove(favoriteStock);
             await _userRepository.UpdateAsync(user);
         }
 

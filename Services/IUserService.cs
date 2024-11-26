@@ -14,5 +14,8 @@ namespace StockAppAPI.Services
         Task DeleteUserAsync(string email);        
         Task UpdateUserAsync(User user);
         Task AddFavoriteStockAsync(string email, string stockSymbol);
+        Task<List<FavoriteStock>> GetUserFavoritesAsync(string email);
+        Task<UserOverviewDTO> GetUserOverviewByEmailAsync(string email);
+        Task DeleteFavoriteStockAsync(string email, string stockSymbol);
     }
 }

@@ -97,7 +97,7 @@ namespace StockAppAPI.Controllers
         // PUT: api/user/{email}
         [HttpPut("{email}")]
         [ProducesResponseType(200)] 
-        [ProducesResponseType(404)]  // Not found if user doesn't exist
+        [ProducesResponseType(404)] 
         public async Task<IActionResult> UpdateUser(string email, [FromBody] UserUpdateDTO userUpdateDto)
         {
             // Get the user by email
@@ -107,12 +107,12 @@ namespace StockAppAPI.Controllers
                 return NotFound($"User with email {email} not found.");
             }
 
-            // Map the update details from the DTO to the User model
-            User userModel = _mapper.Map<User>(userToUpdate); // Convert DTO to User model
+            
+            User userModel = _mapper.Map<User>(userToUpdate); 
             userModel.FirstName = userUpdateDto.FirstName;
             userModel.LastName = userUpdateDto.LastName;
 
-            // Update the user in the repository
+      
             await _userService.UpdateUserAsync(userModel);
 
             return Ok("User updated successfully.");
@@ -139,6 +139,49 @@ namespace StockAppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+
+      
+        // GET: api/users/{email}/favorites
+        [HttpGet("{email}/favorites")]
+        [ProducesResponseType(typeof(List<FavoriteStock>), 200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetUserFavorites(string email)
+        {
+            var userOverview = await _userService.GetUserOverviewByEmailAsync(email);
+            if (userOverview == null)
+            {
+                return NotFound($"User with email {email} not found.");
+            }
+
+            return Ok(userOverview.Favorites);
+        }
+
+
+        // DELETE: api/users/{email}/favorites/{stockSymbol}
+        [HttpDelete("{email}/favorites/{stockSymbol}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> DeleteFavoriteStock(string email, string stockSymbol)
+        {
+            try
+            {
+                await _userService.DeleteFavoriteStockAsync(email, stockSymbol);
+                return Ok($"Stock {stockSymbol} removed from favorites.");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
 
     }
 

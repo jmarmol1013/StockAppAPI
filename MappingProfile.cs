@@ -41,8 +41,8 @@ namespace StockAppAPI
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.IsAdmin, opt => opt.MapFrom(src => src.Admin));
+                
 
-            
             CreateMap<UserDetailDTO, User>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
